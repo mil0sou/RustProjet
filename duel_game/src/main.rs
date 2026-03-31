@@ -1,6 +1,8 @@
 use rand::Rng;
 use log::{info, debug};
 use clap::Parser;
+mod player;
+mod scoring;
 
 /// Arguments du programme
 #[derive(Parser)]
