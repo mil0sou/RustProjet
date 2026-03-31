@@ -1,35 +1,48 @@
-use rand::Rng;
-use log::{info, debug};
-use clap::Parser;
 mod player;
 mod scoring;
+mod turn;
+mod game;
 
-/// Arguments du programme
+use clap::Parser;
+use player::Player;
+use game::{run_game, ask_replay};
+
+/// Jeu de duel en terminal, deux joueurs, tour par tour
 #[derive(Parser)]
+#[command(name = "duel_game", about = "Mini jeu de duel en Rust")]
 struct Args {
+    /// Nom du joueur 1
     #[arg(long, default_value = "Player1")]
     name1: String,
 
+    /// Nom du joueur 2
     #[arg(long, default_value = "Player2")]
     name2: String,
+
+    /// Points de vie de départ
+    #[arg(long, default_value_t = 50)]
+    vitality: i32,
+
+    /// Nombre d'objectifs par tour
+    #[arg(long, default_value_t = 5)]
+    objectifs: usize,
 }
 
 fn main() {
-    // init du logger
     env_logger::init();
 
-    // parse les args CLI
     let args = Args::parse();
 
-    info!("Démarrage du programme");
+    loop {
+        let p1 = Player::new(args.name1.clone(), args.vitality);
+        let p2 = Player::new(args.name2.clone(), args.vitality);
 
-    println!("Joueur 1 : {}", args.name1);
-    println!("Joueur 2 : {}", args.name2);
+        run_game(p1, p2, args.objectifs);
 
-    // test rand : génère 5 objectifs aléatoires
-    let mut rng = rand::thread_rng();
-    let objectifs: Vec<u32> = (0..5).map(|_| rng.gen_range(0..=100)).collect();
+        if !ask_replay() {
+            break;
+        }
+    }
 
-    debug!("Objectifs générés : {:?}", objectifs);
-    println!("Objectifs : {:?}", objectifs);
+    println!("À bientôt !");
 }
