@@ -46,7 +46,7 @@ pub fn play_objectif(target: u32, strength: i32, speed: u64) -> ObjectifResult {
             }
             // affiche le compteur sur la même ligne
             let c = counter_t.lock().unwrap();
-            print!("\r[ {:>3} ]", *c);
+            print!("\r  cible {:>3}  |  compteur [ {:>3} ]", target, *c);
             use std::io::Write;
             io::stdout().flush().unwrap();
         }
